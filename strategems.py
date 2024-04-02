@@ -12,6 +12,7 @@ running = True
 strategems = {
     'Mission - Reinforce': ['i', 'k', 'l', 'j', 'i'],
     'Mission - Resupply': ['k', 'k', 'i', 'l'],
+    'Mission - SEAF Artillery': ['l','i','i','k'],
     'Weapon - Grenade Launcher': ['k', 'j', 'i', 'j', 'k'],
     'Weapon - Antitank': ['k', 'k', 'j', 'i', 'r'],
     'Weapon - Recoiless_rifle': ['k','j','l','l','j'],
