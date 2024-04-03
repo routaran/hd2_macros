@@ -1,4 +1,4 @@
-# Strategems Program
+# Helldivers 2 - Strategem Macros
 
 This is a Python program for managing strategems.
 
