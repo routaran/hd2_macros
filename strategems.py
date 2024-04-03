@@ -1,6 +1,7 @@
 from pynput.keyboard import Key, Controller, Listener
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QInputDialog, QGridLayout, QFrame, QMessageBox
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QInputDialog, QGridLayout, QFrame, QMessageBox, QGroupBox
 import time, threading, json
+from PyQt5.QtCore import Qt
 
 # Create keyboard controller object
 keyboard = Controller()
@@ -66,6 +67,7 @@ def execute_macro(key_sequence):
 class MacroApp(QWidget):
     def __init__(self, stop_event):
         super().__init__()  # Call the constructor of the parent class QWidget
+        self.resize(800, 1024)
         self.stop_event = stop_event  # Store the stop_event parameter in an instance variable
 
         # Set the window title
@@ -82,6 +84,16 @@ class MacroApp(QWidget):
         self.toggle_status_button = QPushButton("Toggle Status")
         self.toggle_status_button.clicked.connect(self.toggle_status)
 
+        # Create a new QLabel for the key bindings
+        self.key_bindings_label = QLabel()
+        self.key_bindings_label.setText("Up -> I\nLeft -> J\nDown -> K\nRight -> L")
+        self.key_bindings_label.setAlignment(Qt.AlignRight)
+
+        # Add the status label, the key bindings label and the toggle status button to the layout
+        self.layout.addWidget(self.status_label, 0, 0, 1, 1)  # Span the status label across 3 columns
+        self.layout.addWidget(self.toggle_status_button, 0, 1, 1, 1)  # Move the toggle status button to the next row
+        self.layout.addWidget(self.key_bindings_label, 1, 0, 1, 3)  # Span the key bindings label across 3 columns
+
         # Add the status label and the toggle status button to the layout
         self.layout.addWidget(self.status_label, 0, 0)
         self.layout.addWidget(self.toggle_status_button, 0, 1)
@@ -96,7 +108,7 @@ class MacroApp(QWidget):
         self.key_buttons = []
 
         # Define the positions of the widgets in the grid layout
-        positions = [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 1), (3, 0), (3, 1), (3, 2)]
+        positions = [(1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2), (3, 1), (4, 0), (4, 1), (4, 2)]
 
         # Loop over the positions and keys
         for position, key in zip(positions, self.keys):
@@ -105,24 +117,44 @@ class MacroApp(QWidget):
 
             # Create a new QLabel for the key, set its style, and add it to the list of key labels
             key_label = QLabel(f"{key.capitalize()}")
-            key_label.setStyleSheet("border: 1px solid black; padding: 5px; font-weight: bold; background-color: lightgray; color: black;")
+            key_label.setStyleSheet("border: 2px solid white; padding: 5px; font-weight: bold; background-color: black; color: white;")
+            key_label.setAlignment(Qt.AlignCenter)
             self.key_labels.append(key_label)
 
             # Create a new QLabel for the macro, set its style, and add it to the list of macro labels
             macro_label = QLabel(f"{macro_name}")
-            macro_label.setStyleSheet("border: 1px solid black; padding: 5px; font-style: italic; background-color: white; color: black;")
+            macro_label.setStyleSheet("border: 2px solid black; padding: 5px; font-style: italic; background-color: white; color: red;")
+            macro_label.setAlignment(Qt.AlignCenter)
             self.macro_labels.append(macro_label)
 
             # Create a new QPushButton, set its style, connect its clicked signal to the create_callback method, and add it to the list of key buttons
             button = QPushButton("Change Macro")
-            button.setStyleSheet("border: 1px solid black; padding: 5px; background-color: lightblue; color: black;")
+            button.setStyleSheet("""
+                QPushButton {
+                    border: 2px solid black;
+                    padding: 5px;
+                    background-color: lightblue;
+                    color: black;
+                    border-radius: 5px;
+                    border: 5px outset white;
+                }
+                QPushButton:hover {
+                    background-color: lightgreen;
+                }
+            """)   
             button.clicked.connect(self.create_callback(key))
+            button.pressed.connect(self.button_pressed)
+            button.released.connect(self.button_released)
             self.key_buttons.append(button)
 
             # Create a new QFrame, set its shape and shadow, create a new QVBoxLayout, add the key label, macro label, and button to the layout, and set the layout of the frame
             frame = QFrame()
             frame.setFrameShape(QFrame.StyledPanel)
             frame.setFrameShadow(QFrame.Raised)
+            frame.setStyleSheet("""
+                background-color: lightgray;
+                color: black;
+            """)
             frame_layout = QVBoxLayout()
             frame_layout.addWidget(key_label)
             frame_layout.addWidget(macro_label)
@@ -132,29 +164,71 @@ class MacroApp(QWidget):
             # Add the frame to the grid layout at the current position
             self.layout.addWidget(frame, position[0]*2 + 1, position[1])
 
+        # Create a new QGroupBox
+        self.strategem_group = QGroupBox("Manage Strategems")
+        self.strategem_group.setStyleSheet("QGroupBox { border: 1px solid red; }")
+        # Set the height of the QGroupBox
+        self.strategem_group.setFixedHeight(110)
+
+        # Create a layout for the group
+        group_layout = QGridLayout()
+
         # Create a new QPushButton, set its text, and connect its clicked signal to the add_strategem method
         self.add_strategem_button = QPushButton("Add Strategem")
         self.add_strategem_button.clicked.connect(self.add_strategem)
 
-        # Add the add strategem button to the layout
-        self.layout.addWidget(self.add_strategem_button, 8, 0)
+        # Add the add strategem button to the group layout
+        group_layout.addWidget(self.add_strategem_button, 0, 0)
 
         # Create a new QPushButton, set its text, and connect its clicked signal to the edit_strategem method
         self.edit_strategem_button = QPushButton("Edit Strategem")
         self.edit_strategem_button.clicked.connect(self.edit_strategem)
 
-        # Add the edit strategem button to the layout at the specified position
-        self.layout.addWidget(self.edit_strategem_button, 8, 1)
+        # Add the edit strategem button to the group layout
+        group_layout.addWidget(self.edit_strategem_button, 0, 1)
 
         # Create a new QPushButton, set its text, and connect its clicked signal to the delete_strategem method
         self.delete_strategem_button = QPushButton("Delete Strategem")
         self.delete_strategem_button.clicked.connect(self.delete_strategem)
 
-        # Add the delete strategem button to the layout at the specified position
-        self.layout.addWidget(self.delete_strategem_button, 8, 2)
+        # Add the delete strategem button to the group layout
+        group_layout.addWidget(self.delete_strategem_button, 0, 2)
+
+        # Set the group layout
+        self.strategem_group.setLayout(group_layout)
+
+        # Add the group to the main layout
+        self.layout.addWidget(self.strategem_group, 10, 0, 1, 3)
         
         # Set the layout of the widget to the grid layout
         self.setLayout(self.layout)
+    
+    def button_pressed(self):
+        sender = self.sender()
+        sender.setStyleSheet("""
+            border: 2px solid black;
+            padding: 5px;
+            background-color: green;
+            color: white;
+            border-radius: 5px;
+            border: 5px outset white;
+        """)
+
+    def button_released(self):
+        sender = self.sender()
+        sender.setStyleSheet("""
+            QPushButton {
+                border: 2px solid black;
+                padding: 5px;
+                background-color: lightblue;
+                color: black;
+                border-radius: 5px;
+                border: 5px outset white;
+            }
+            QPushButton:hover {
+                background-color: lightgreen;
+            }
+        """)
 
     def create_callback(self, key):
         # This function creates a callback function for a given key.
