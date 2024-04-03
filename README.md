@@ -10,7 +10,7 @@ This is a Python program for managing strategems.
 
 1. Clone the repository:
     ```
-    git clone https://github.com/rkalluri/strategems.git
+    git clone https://github.com/routaran/strategems.git
     ```
 2. Navigate to the project directory:
     ```
