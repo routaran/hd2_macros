@@ -10,7 +10,7 @@ This is a Python program for managing strategems.
 
 1. Clone the repository:
     ```
-    git clone https://github.com/yourusername/strategems.git
+    git clone https://github.com/rkalluri/strategems.git
     ```
 2. Navigate to the project directory:
     ```
@@ -51,6 +51,8 @@ This is a Python program for managing strategems.
 4. You can edit an existing strategem by clicking the "Edit Strategem" button, selecting the strategem to edit, and entering the new keys.
 
 5. You can delete an existing strategem by clicking the "Delete Strategem" button and selecting the strategem to delete. If the strategem is currently bound to a macro, the macro will be set to "Unassigned".
+
+6. If you make a mistake and accidentally delete strategems, you can restore the original setup by downloading and replacing the strategem.json file from the repository. This allows you to revert back to the original strategems without having to manually re-enter them.
 
 ## Contributing
 
