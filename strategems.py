@@ -1,5 +1,5 @@
 from pynput.keyboard import Key, Controller, Listener
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QInputDialog, QGridLayout, QFrame
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QInputDialog, QGridLayout, QFrame, QMessageBox
 import time, threading, json
 
 # Create keyboard controller object
@@ -11,7 +11,11 @@ running = True
 # Load strategems from a JSON file
 try:
     with open('strategems.json', 'r') as f:
-        strategems = json.load(f)
+        strategems = json.load(f)# Ensure 'Unassigned' is a key in strategems
+        if 'Unassigned' not in strategems:
+            strategems['Unassigned'] = []
+        # Order the strategems dictionary by key in ascending order
+        strategems = dict(sorted(strategems.items()))
 except FileNotFoundError:
     strategems = {}  # Initialize an empty dictionary if the file does not exist
 
@@ -58,21 +62,6 @@ def execute_macro(key_sequence):
         time.sleep(0.05)        # wait for 50 ms
         keyboard.release(key)   # release the key
         time.sleep(0.05)        # wait for 50 ms
-
-
-def on_press(key):                          # Define a function to handle keypress events
-    global running                          # Access the global running variable
-    if key == Key.f12:        
-        running = not running               # Toggle the boolean value of running variable
-    if key in macros and running:           # If the key is in macros and running is True
-        with keyboard.pressed(Key.ctrl_l):
-            time.sleep(0.2)                 # Wait for 100 ms
-            # Get the strategem name from the strategems dictionary
-            strategem_name = [name for name, sequence in strategems.items() if sequence == macros[key]][0]
-            # Print the key and the associated strategem
-            print(f"Executing strategem: {key} - {strategem_name} - {macros[key]}")  
-            execute_macro(macros[key])      # Execute the macro associated with the key            
-            time.sleep(0.3)                 # Wait for 100 ms
 
 class MacroApp(QWidget):
     def __init__(self, stop_event):
@@ -191,12 +180,16 @@ class MacroApp(QWidget):
         # It opens two dialogs to let the user input the name and the keys of the new strategem.
         strategem_name, ok1 = QInputDialog.getText(self, "Add a strategem", "Name:")
         if ok1:
-            strategem_keys, ok2 = QInputDialog.getText(self, "Add a strategem", "Keys:")
-            # If the user clicked OK and inputted the name and the keys, add the new strategem.
-            if ok2 and strategem_name and strategem_keys:
-                strategems[strategem_name] = list(strategem_keys)
-                self.macros.append(strategem_name)
-                save_strategem(strategem_name, strategems[strategem_name])
+            lower_case_strategem_name = strategem_name.lower()
+            if any(existing_name.lower() == lower_case_strategem_name for existing_name in strategems):
+                QMessageBox.warning(self, "Warning", "Strategem already exists!")
+            else:
+                strategem_keys, ok2 = QInputDialog.getText(self, "Add a strategem", "Keys:")
+                # If the user clicked OK and inputted the name and the keys, add the new strategem.
+                if ok2 and strategem_name and strategem_keys:
+                    strategems[strategem_name] = list(strategem_keys)
+                    self.macros.append(strategem_name)
+                    save_strategem(strategem_name, strategems[strategem_name])
 
     def edit_strategem(self):
         # This function edits an existing strategem.
@@ -228,6 +221,21 @@ class MacroApp(QWidget):
             save_strategem()
             save_macros()
 
+    def on_press(self, key):  # Define a function to handle keypress events
+        global running  # Access the global running variable
+        if key == Key.f12:        
+            running = not running  # Toggle the boolean value of running variable
+            self.update_status_label()  # Update the status label
+        if key in macros and running:  # If the key is in macros and running is True
+            with keyboard.pressed(Key.ctrl_l):
+                time.sleep(0.2)  # Wait for 100 ms
+                # Get the strategem name from the strategems dictionary
+                strategem_name = [name for name, sequence in strategems.items() if sequence == macros[key]][0]
+                # Print the key and the associated strategem
+                print(f"Executing strategem: {key} - {strategem_name} - {macros[key]}")  
+                execute_macro(macros[key])  # Execute the macro associated with the key            
+                time.sleep(0.3)  # Wait for 100 ms
+
     def toggle_status(self):
         # This function toggles the running status of the application.
         # It updates the global running variable and the text and color of the status label.
@@ -252,7 +260,7 @@ class MacroApp(QWidget):
         event.accept()  # Let the window close
 
 # Listen for keypresses in a separate thread
-def start_listener(stop_event):
+def start_listener(stop_event, on_press):
     listener = Listener(on_press=on_press)
     listener.start()
     while not stop_event.is_set():
@@ -263,10 +271,10 @@ def start_listener(stop_event):
 running = False
 
 stop_event = threading.Event()
-listener_thread = threading.Thread(target=start_listener, args=(stop_event,))
-listener_thread.start()
-
 app = QApplication([])
 window = MacroApp(stop_event)
+listener_thread = threading.Thread(target=start_listener, args=(stop_event, window.on_press))
+listener_thread.start()
+
 window.show()
 app.exec_()
