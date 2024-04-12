@@ -115,7 +115,7 @@ class MacroApp(QWidget):
 
         # Create a new QLabel for the key bindings
         self.key_bindings_label = QLabel()
-        self.key_bindings_label.setText("Up -> I\nLeft -> J\nDown -> K\nRight -> L")
+        self.key_bindings_label.setText("Strategem -> Left Control\nUp -> I\nLeft -> J\nDown -> K\nRight -> L")
         self.key_bindings_label.setAlignment(Qt.AlignRight)
 
         # Add the status label, the key bindings label and the toggle status button to the layout
