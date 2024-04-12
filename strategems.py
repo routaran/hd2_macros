@@ -1,24 +1,33 @@
 from pynput.keyboard import Key, Controller, Listener
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QInputDialog, QGridLayout, QFrame, QMessageBox, QGroupBox
-import time, threading, json
+import time, threading, json, os
 from PyQt5.QtCore import Qt
+from datetime import datetime
+
+# Get the directory of the script
+dir_path = os.path.dirname(os.path.realpath(__file__))
+# Construct the paths to the JSON files
+strategems_path = os.path.join(dir_path, './strategems.json')
+macros_path = os.path.join(dir_path, './macros.json')
 
 # Create keyboard controller object
 keyboard = Controller()
 
 # Variable to track of the state of the macro listener
-running = True
+running = False
 
 # Load strategems from a JSON file
 try:
-    with open('strategems.json', 'r') as f:
+    with open(strategems_path, 'r') as f:
         strategems = json.load(f)# Ensure 'Unassigned' is a key in strategems
         if 'Unassigned' not in strategems:
             strategems['Unassigned'] = []
         # Order the strategems dictionary by key in ascending order
         strategems = dict(sorted(strategems.items()))
-except FileNotFoundError:
+except FileNotFoundError as e:
+    print(f"FileNotFoundError: {e}")
     strategems = {}  # Initialize an empty dictionary if the file does not exist
+    strategems['Unassigned'] = []
 
 def save_strategem(name=None, sequence=None):
     global strategems  # Use the global variable
@@ -27,23 +36,35 @@ def save_strategem(name=None, sequence=None):
     # Order the strategems dictionary by key in ascending order
     strategems = dict(sorted(strategems.items()))
     # Save the updated strategems dictionary to a JSON file
-    with open('strategems.json', 'w') as f:
+    with open(strategems_path, 'w') as f:
         json.dump(strategems, f)
 
 # Load macro bindings from a JSON file
 try:
-    with open('macros.json', 'r') as f:
+    with open(macros_path, 'r') as f:
         macros_json = json.load(f)
         # Order the macros_json dictionary by key in ascending order
         macros_json_ordered = dict(sorted(macros_json.items()))
         # Map string keys to Key objects
         macros = {getattr(Key, k): strategems[v] for k, v in macros_json_ordered.items()}
-except FileNotFoundError:
+except KeyError as e:
+    print(f"KeyError: {e}")
+    # Initialize an empty dictionary if the file does not exist
+    macros_json_ordered = {"delete": "Unassigned", "down": "Unassigned", "end": "Unassigned", "home": "Unassigned", "insert": "Unassigned", "left": "Unassigned", "page_down": "Unassigned", "page_up": "Unassigned", "right": "Unassigned", "up": "Unassigned"}
+    # Map string keys to Key objects
+    macros = {getattr(Key, k): strategems[v] for k, v in macros_json_ordered.items()}
+    macros = {}
+except FileNotFoundError as e:
+    print(f"FileNotFoundError: {e}")
+    # Initialize an empty dictionary if the file does not exist
+    macros_json_ordered = {"delete": "Unassigned", "down": "Unassigned", "end": "Unassigned", "home": "Unassigned", "insert": "Unassigned", "left": "Unassigned", "page_down": "Unassigned", "page_up": "Unassigned", "right": "Unassigned", "up": "Unassigned"}
+    # Map string keys to Key objects
+    macros = {getattr(Key, k): strategems[v] for k, v in macros_json_ordered.items()}
     macros = {}  # Initialize an empty dictionary if the file does not exist
 
 def save_macros():
     global macros, strategems  # Use the global variables
-    with open('macros.json', 'w') as f:
+    with open(macros_path, 'w') as f:
         # Ensure 'Unassigned' is a key in strategems
         if 'Unassigned' not in strategems:
             strategems['Unassigned'] = []
@@ -63,6 +84,14 @@ def execute_macro(key_sequence):
         time.sleep(0.05)        # wait for 50 ms
         keyboard.release(key)   # release the key
         time.sleep(0.05)        # wait for 50 ms
+
+# Listen for keypresses in a separate thread
+def start_listener(stop_event, on_press):
+    listener = Listener(on_press=on_press)
+    listener.start()
+    while not stop_event.is_set():
+        time.sleep(0.1)         # Wait for 100 ms
+    listener.stop()
 
 class MacroApp(QWidget):
     def __init__(self, stop_event):
@@ -301,14 +330,17 @@ class MacroApp(QWidget):
             running = not running  # Toggle the boolean value of running variable
             self.update_status_label()  # Update the status label
         if key in macros and running:  # If the key is in macros and running is True
+            self.toggle_status()  # Toggle the running status
             with keyboard.pressed(Key.ctrl_l):
                 time.sleep(0.2)  # Wait for 100 ms
                 # Get the strategem name from the strategems dictionary
                 strategem_name = [name for name, sequence in strategems.items() if sequence == macros[key]][0]
                 # Print the key and the associated strategem
-                print(f"Executing strategem: {key} - {strategem_name} - {macros[key]}")  
+                strategem_name = strategem_name.ljust(25)
+                print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - {strategem_name}")
                 execute_macro(macros[key])  # Execute the macro associated with the key            
                 time.sleep(0.3)  # Wait for 100 ms
+            self.toggle_status()  # Toggle the running status
 
     def toggle_status(self):
         # This function toggles the running status of the application.
@@ -332,17 +364,6 @@ class MacroApp(QWidget):
     def closeEvent(self, event):
         self.stop_event.set()  # Signal the listener thread to stop
         event.accept()  # Let the window close
-
-# Listen for keypresses in a separate thread
-def start_listener(stop_event, on_press):
-    listener = Listener(on_press=on_press)
-    listener.start()
-    while not stop_event.is_set():
-        time.sleep(0.1)  # Wait for 100 ms
-    listener.stop()
-
-# Initialize the running status to False
-running = False
 
 stop_event = threading.Event()
 app = QApplication([])
