@@ -55,6 +55,12 @@ def save_strategem(name=None, sequence=None):
 
 # Define a function to save a strategem & macro bindings to a JSON file
 def save_macros():
+	'''TODO: There is code redundancy here.
+		This code saves strategems and macros to JSON files.
+		Another function handles just the strategems.
+		Should reduce scope of this function to just saving macros only.
+		Then update calling functions to explicitly save both strategems and macros if necessary.
+ 	'''
 	global strategems, macros  # Use the global variables
 	with open(strategems_path, 'w') as f_strategems, open(macros_path, 'w') as f_macros:
 		# Now create reverse_strategems
