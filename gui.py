@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, simpledialog, messagebox
 import json
 import threading
 # Correcting the import based on your file structure
@@ -58,7 +58,24 @@ class MacroGUI:
             change_button.grid(row=row, column=2, padx=10, pady=5, sticky="w")
             data_frame.columnconfigure(i, minsize=cell_width)
             row += 1
+        
+        # Add buttons to the bottom of the GUI
+        button_frame = ttk.Frame(self.master)
+        button_frame.grid(row=row, columnspan=num_columns, padx=30, pady=5, sticky="nsew")
+        ttk.Button(button_frame, text="Add Strategem", style='W.TButton', command=self.add_strategem).grid(row=0, column=0, padx=10, pady=5)
+        ttk.Button(button_frame, text="Edit Strategem", style='W.TButton', command=self.edit_strategem).grid(row=0, column=1, padx=10, pady=5)
+        ttk.Button(button_frame, text="Delete Strategem", style='W.TButton', command=self.delete_strategem).grid(row=0, column=2, padx=10, pady=5)
 
+    def update_view(self, strategem_name):
+        """Update the view after a strategem is deleted."""
+        # Find the label of the button that is bound to the deleted strategem
+        for child in self.master.winfo_children():
+            if isinstance(child, ttk.Frame):
+                for grandchild in child.winfo_children():
+                    if isinstance(grandchild, ttk.Label) and grandchild.cget("text") == strategem_name:
+                        # Update the label of the button
+                        grandchild.config(text="Unassigned")
+                        break
 
     def change_binding(self, key, label_widget):
         """Change the binding of a key using a popup window."""
@@ -82,7 +99,7 @@ class MacroGUI:
             popup.destroy()  # Close the popup after selection
 
         # Set the command to run on selection
-        new_strategem.trace("w", on_selection)
+        new_strategem.trace_add("write", on_selection)
 
     def update_binding(self, key, new_strategem, label_widget):
         """Update the binding of a key and refresh the GUI."""
@@ -103,10 +120,88 @@ class MacroGUI:
         self.listener_thread.start()
 
     def on_close(self):
-        """Handle GUI closure."""
         if self.listener.running:
             self.listener.stop()  # Stop the listener if it is running
         self.master.destroy()  # Destroy the window
+
+    def save_strategems(self):
+        """Save the updated strategems back to the JSON file."""
+        with open(self.listener.strategems_file, 'w') as file:
+            json.dump(self.strategems, file, sort_keys=True)
+    
+    def add_strategem(self):
+        """Add a new strategem."""
+        # Open a dialog to let the user input the name of the new strategem
+        strategem_name = CustomDialog(self.master, "Strategem Name").result
+        if strategem_name:
+            lower_case_strategem_name = strategem_name.lower()
+            if any(existing_name.lower() == lower_case_strategem_name for existing_name in self.strategems):
+                tk.messagebox.showwarning("Warning", "Strategem already exists!")
+            else:
+                # Open a dialog to let the user input the keys of the new strategem
+                strategem_keys = CustomDialog(self.master, "Strategem Keys").result
+                if strategem_keys:
+                    self.strategems[strategem_name] = list(strategem_keys)
+                    self.save_strategems()
+
+    def edit_strategem(self):
+        """Edit an existing strategem."""
+        # Open a dialog to let the user select the strategem to edit
+        dialog = ComboDialog(self.master, strategems=list(self.strategems.keys()))
+        strategem_name = dialog.result
+        if strategem_name in self.strategems:
+            # Open a dialog to let the user input the new keys for the strategem
+            strategem_keys = CustomDialog(self.master, "Edit a strategem").result
+            if strategem_keys:
+                self.strategems[strategem_name] = list(strategem_keys)
+                self.save_strategems()
+        else:
+            tk.messagebox.showwarning("Warning", "Strategem does not exist!")
+
+    def delete_strategem(self):
+        """Delete an existing strategem."""
+        # Open a dialog to let the user select the strategem to delete
+        dialog = ComboDialog(self.master, strategems=list(self.strategems.keys()))
+        strategem_name = dialog.result
+        if strategem_name in self.strategems:
+            del self.strategems[strategem_name]
+            self.save_strategems()
+    
+            # Check if the deleted strategem is bound to any button
+            for key, bound_strategem in list(self.bindings.items()):
+                if bound_strategem == strategem_name:
+                    # If it is, update the strategem name in the bindings dictionary to "Unassigned"
+                    self.bindings[key] = "Unassigned"                    
+                    self.save_bindings()
+                    self.update_view(strategem_name)
+        else:
+            tk.messagebox.showwarning("Warning", "Strategem does not exist!")    
+
+class ComboDialog(simpledialog.Dialog):
+    def __init__(self, parent, title=None, strategems=None):
+        self.strategems = strategems
+        super().__init__(parent, title=title)
+
+    def body(self, master):
+        self.title("Edit a strategem")
+        tk.Label(master, text="Name:").grid(row=0)
+        self.combo = ttk.Combobox(master, values=self.strategems)
+        self.combo.grid(row=0, column=1)
+        self.combo.focus_set()  # Set focus to the combobox
+        return self.combo  # initial focus
+
+    def apply(self):
+        self.result = self.combo.get()
+
+class CustomDialog(tk.simpledialog.Dialog):
+    def body(self, master):
+        self.entry = tk.Entry(master)
+        self.entry.pack()
+        self.entry.focus_set()  # Set focus to the entry
+        return self.entry  # initial focus
+
+    def apply(self):
+        self.result = self.entry.get()
 
 if __name__ == "__main__":
     root = tk.Tk()

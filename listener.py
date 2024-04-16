@@ -47,13 +47,13 @@ class KeyboardListener:
         # Example of what could be done with the sequence; custom handling needed
         print(f"Executing {name}: {sequence}")
         # You might simulate key presses or other actions based on sequence
-        """  with keyboard.pressed(Key.ctrl_l):
+        """ with keyboard.pressed(Key.ctrl_l):  # Press and hold the left control key
             time.sleep(0.1)
             for key in sequence:
-                keyboard.press(key)     # press the key
-                time.sleep(0.05)        # wait for 50 ms
-                keyboard.release(key)   # release the key
-                time.sleep(0.05)        # wait for 50 ms """
+                keyboard.press(key)         # press the key
+                time.sleep(0.05)            # wait for 50 ms
+                keyboard.release(key)       # release the key
+                time.sleep(0.05)            # wait for 50 ms """
 
     def start(self):
         while self.running:
