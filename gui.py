@@ -27,13 +27,36 @@ class MacroGUI:
     def create_widgets(self):
         """Create widgets for each macro binding."""
         row = 0
+        cell_width = 100  # Set the static size for each cell width
+        num_columns = 3  # Number of columns in your grid
+    
+        style = ttk.Style()
+        style.configure('W.TButton', font=('default', 20))
+    
+        # Create a frame for the headers
+        header_frame = ttk.Frame(self.master, borderwidth=2, relief="solid")
+        header_frame.grid(row=row, columnspan=num_columns, padx=10, pady=5, sticky="nsew")
+    
+        # Create headers
+        headers = ["Macro Key", "Bound To", ""]
+        for i in range(num_columns):
+            ttk.Label(header_frame, text=headers[i], font=("default", 24, "bold")).grid(row=row, column=i, padx=10, pady=5, sticky="w")
+            header_frame.columnconfigure(i, minsize=cell_width)
+        row += 1
+    
+        # Create a frame for the data
+        data_frame = ttk.Frame(self.master, borderwidth=2, relief="solid")
+        data_frame.grid(row=row, columnspan=num_columns, padx=10, pady=5, sticky="nsew")
+    
+        # Create data rows
         for key, strategem_name in self.bindings.items():
-            ttk.Label(self.master, text=f"Key: {key}").grid(row=row, column=0)
-            current_strategem = ttk.Label(self.master, text=strategem_name)
-            current_strategem.grid(row=row, column=1)
-            change_button = ttk.Button(self.master, text="Change",
+            ttk.Label(data_frame, text=f"{key.capitalize()}", font=("default", 24, "bold")).grid(row=row, column=0, padx=10, pady=5, sticky="w")
+            current_strategem = ttk.Label(data_frame, text=strategem_name, font=("default", 20, "italic"))
+            current_strategem.grid(row=row, column=1, padx=10, pady=5, sticky="w")
+            change_button = ttk.Button(data_frame, text="Change", style='W.TButton',
                                        command=lambda key=key, label=current_strategem: self.change_binding(key, label))
-            change_button.grid(row=row, column=2)
+            change_button.grid(row=row, column=2, padx=10, pady=5, sticky="w")
+            data_frame.columnconfigure(i, minsize=cell_width)
             row += 1
 
 
