@@ -1,10 +1,8 @@
 import tkinter as tk
-from tkinter import ttk, simpledialog, messagebox
+from tkinter import ttk, simpledialog
 import json
 import threading
-# Correcting the import based on your file structure
 from listener import KeyboardListener
-
 
 class MacroGUI:
     def __init__(self, master, listener):
