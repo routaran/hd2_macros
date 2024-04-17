@@ -4,26 +4,28 @@ import json
 import threading
 from listener import KeyboardListener
 
+# GUI class
 class MacroGUI:
+    # Constructor
     def __init__(self, master, listener):
         self.master = master
         self.listener = listener
         self.master.title("Macro Editor")
 
-        self.load_data()
-        self.create_widgets()
-        self.start_listener()
+        self.load_data()        # Load strategems and bindings into the GUI
+        self.create_widgets()   # Create widgets for each macro binding
+        self.start_listener()   # Start the keyboard listener in a separate thread
 
         # Bind window close event
-        self.master.protocol("WM_DELETE_WINDOW", self.on_close)
+        self.master.protocol("WM_DELETE_WINDOW", self.on_close) # Bind the window close event to the on_close method
 
+    # Load strategems and bindings into the GUI
     def load_data(self):
-        """Load strategems and bindings into the GUI."""
         self.strategems = self.listener.strategems
         self.bindings = self.listener.bindings
 
+    # Create widgets for each macro binding
     def create_widgets(self):
-        """Create widgets for each macro binding."""
         row = 0
         cell_width = 100  # Set the static size for each cell width
         num_columns = 3  # Number of columns in your grid
@@ -56,7 +58,7 @@ class MacroGUI:
         data_frame = ttk.Frame(self.master, borderwidth=2, relief="solid")
         data_frame.grid(row=row, columnspan=num_columns, padx=10, pady=5, sticky="nsew")
     
-        # Create data rows
+        # Create keybinding rows
         for key, strategem_name in self.bindings.items():
             ttk.Label(data_frame, text=f"{key.capitalize()}", font=("default", 24, "bold")).grid(row=row, column=0, padx=10, pady=5, sticky="w")
             current_strategem = ttk.Label(data_frame, text=strategem_name, font=("default", 20, "italic"))
@@ -74,22 +76,10 @@ class MacroGUI:
         ttk.Button(button_frame, text="Edit Strategem", style='W.TButton', command=self.edit_strategem).grid(row=0, column=1, padx=10, pady=5)
         ttk.Button(button_frame, text="Delete Strategem", style='W.TButton', command=self.delete_strategem).grid(row=0, column=2, padx=10, pady=5)
 
-    def update_view(self, strategem_name):
-        """Update the view after a strategem is deleted."""
-        # Find the label of the button that is bound to the deleted strategem
-        for child in self.master.winfo_children():
-            if isinstance(child, ttk.Frame):
-                for grandchild in child.winfo_children():
-                    if isinstance(grandchild, ttk.Label) and grandchild.cget("text") == strategem_name:
-                        # Update the label of the button
-                        grandchild.config(text="Unassigned")
-                        break
-
+    # Change the binding of a key
     def change_binding(self, key, label_widget):
-        """Change the binding of a key using a popup window."""
         popup = tk.Toplevel(self.master)
         popup.title("Select Strategem")
-        popup.geometry("300x100")  # Adjust size as necessary
 
         # Create a variable to hold the selection
         new_strategem = tk.StringVar(popup)
@@ -109,36 +99,36 @@ class MacroGUI:
         # Set the command to run on selection
         new_strategem.trace_add("write", on_selection)
 
+    # Update the binding of a key
     def update_binding(self, key, new_strategem, label_widget):
-        """Update the binding of a key and refresh the GUI."""
         self.bindings[key] = new_strategem
         label_widget.config(text=new_strategem)
         self.save_bindings()
 
-    def save_bindings(self):
-        """Save the updated bindings back to the JSON file."""
-        with open(self.listener.macro_file, 'w') as file:
-            json.dump(self.bindings, file)
-
+    # Start the listener in a separate thread
     def start_listener(self):
-        """Start the keyboard listener in a separate thread."""
         self.listener_thread = threading.Thread(target=self.listener.start)
-        # This makes the thread exit when the main program exits
         self.listener_thread.daemon = True
         self.listener_thread.start()
 
+    # Close the window
     def on_close(self):
         if self.listener.running:
             self.listener.stop()  # Stop the listener if it is running
         self.master.destroy()  # Destroy the window
 
+    # Save the strategems to a JSON file
     def save_strategems(self):
-        """Save the updated strategems back to the JSON file."""
         with open(self.listener.strategems_file, 'w') as file:
             json.dump(self.strategems, file, sort_keys=True)
+
+    # Save the bindings to a JSON file
+    def save_bindings(self):
+        with open(self.listener.macro_file, 'w') as file:
+            json.dump(self.bindings, file)
     
+    # Add a new strategem
     def add_strategem(self):
-        """Add a new strategem."""
         # Open a dialog to let the user input the name of the new strategem
         strategem_name = CustomDialog(self.master, "Strategem Name").result
         if strategem_name:
@@ -152,8 +142,8 @@ class MacroGUI:
                     self.strategems[strategem_name] = list(strategem_keys)
                     self.save_strategems()
 
+    # Edit an existing strategem
     def edit_strategem(self):
-        """Edit an existing strategem."""
         # Open a dialog to let the user select the strategem to edit
         dialog = ComboDialog(self.master, strategems=list(self.strategems.keys()))
         strategem_name = dialog.result
@@ -166,8 +156,8 @@ class MacroGUI:
         else:
             tk.messagebox.showwarning("Warning", "Strategem does not exist!")
 
+    # Delete an existing strategem
     def delete_strategem(self):
-        """Delete an existing strategem."""
         # Open a dialog to let the user select the strategem to delete
         dialog = ComboDialog(self.master, strategems=list(self.strategems.keys()))
         strategem_name = dialog.result
@@ -183,8 +173,20 @@ class MacroGUI:
                     self.save_bindings()
                     self.update_view(strategem_name)
         else:
-            tk.messagebox.showwarning("Warning", "Strategem does not exist!")    
+            tk.messagebox.showwarning("Warning", "Strategem does not exist!")   
+    
+    # Update the view when a strategem is deleted
+    def update_view(self, strategem_name):
+        # Find the label of the button that is bound to the deleted strategem
+        for child in self.master.winfo_children():
+            if isinstance(child, ttk.Frame):
+                for grandchild in child.winfo_children():
+                    if isinstance(grandchild, ttk.Label) and grandchild.cget("text") == strategem_name:
+                        # Update the label of the button
+                        grandchild.config(text="Unassigned")
+                        break 
 
+# Custom dialog classes
 class ComboDialog(simpledialog.Dialog):
     def __init__(self, parent, title=None, strategems=None):
         self.strategems = strategems
@@ -201,6 +203,7 @@ class ComboDialog(simpledialog.Dialog):
     def apply(self):
         self.result = self.combo.get()
 
+# Custom dialog classes
 class CustomDialog(tk.simpledialog.Dialog):
     def body(self, master):
         self.entry = tk.Entry(master)
@@ -211,8 +214,9 @@ class CustomDialog(tk.simpledialog.Dialog):
     def apply(self):
         self.result = self.entry.get()
 
+# Main function
 if __name__ == "__main__":
-    root = tk.Tk()
+    mainApplication = tk.Tk()
     listener = KeyboardListener('strategems.json', 'macros.json')
-    app = MacroGUI(root, listener)
-    root.mainloop()
+    app = MacroGUI(mainApplication, listener)
+    mainApplication.mainloop()
