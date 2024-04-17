@@ -38,10 +38,15 @@ This is a Python program for managing strategems.
     ```
 
 ## Usage
+1. Run the Windows executable, json files MUST be in the same folder as the executable
+    ```
+    strategems.exe
+    ```
 
+Alternatively, run via python:
 1. Run the program:
     ```
-    python strategems.py
+    python gui.py
     ```
 
 2. The program will open a GUI where you can manage your strategems.
