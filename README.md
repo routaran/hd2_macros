@@ -10,7 +10,7 @@ This is a Python program for managing strategems.
 
 1. Clone the repository:
     ```
-    git clone https://github.com/routaran/strategems.git
+    https://github.com/routaran/hd2_macros.git
     ```
 2. Navigate to the project directory:
     ```
