@@ -125,7 +125,7 @@ class MacroGUI:
     # Save the bindings to a JSON file
     def save_bindings(self):
         with open(self.listener.macro_file, 'w') as file:
-            json.dump(self.bindings, file)
+            json.dump(self.bindings, file, sort_keys=False)
     
     # Add a new strategem
     def add_strategem(self):
