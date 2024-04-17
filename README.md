@@ -48,7 +48,7 @@ To use the program:
     ```
 Alternatively:
 
-1. Run the precompiled Windows executable; json files MUST be in the same folder as the executable. You can move the executable anywhere you want, as long as it is with the 2 json files. I tested this on my Win10x64 and it worked, not sure about compatibility as I don't have access to other versions of Windows but it should work.
+1. Run the precompiled Windows executable; json files MUST be in the same folder as the executable. You can move the executable anywhere you want, as long as it is with the 2 json files. I tested this on my Win10x64 and it worked, not sure about compatibility with other versions as I don't have access to other versions of Windows but it should work. The executable will not work with x86 versions of Windows.
     ```
     stratagems.exe
     ```
