@@ -11,22 +11,22 @@ class KeyboardListener:
     def __init__(self, stratagems_file, macro_file):
         self.stratagems_file = stratagems_file
         self.macro_file = macro_file
-        self.stratagems = {}    # Dictionary to store stratagems
+        self.stratagems = {}    # Dictionary to store Stratagems
         self.bindings = {}      # Dictionary to store macro bindings
-        self.load_stratagems()  # Load stratagems from a JSON file
+        self.load_stratagems()  # Load Stratagems from a JSON file
         self.load_macros()      # Load macro bindings from a JSON file
         self.running = True     # Control the running of the listener loop
 
-    # Load stratagems from a JSON file
+    # Load Stratagems from a JSON file
     def load_stratagems(self):
-        """Load stratagems from a JSON file."""
+        """Load Stratagems from a JSON file."""
         try:
             with open(self.stratagems_file, 'r') as file:
                 self.stratagems = json.load(file)
         except FileNotFoundError:
-            print("stratagems file not found.")
+            print("Stratagems file not found.")
         except json.JSONDecodeError:
-            print("Error decoding the stratagems file.")
+            print("Error decoding the Stratagems file.")
 
     # Load macro bindings from a JSON file
     def load_macros(self):
