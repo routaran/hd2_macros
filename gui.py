@@ -34,6 +34,16 @@ class MacroGUI:
         # Create a frame for the headers
         header_frame = ttk.Frame(self.master, borderwidth=2, relief="solid")
         header_frame.grid(row=row, columnspan=num_columns, padx=10, pady=5, sticky="nsew")
+
+        # Display text to the user
+        ttk.Label(header_frame, text="Strategem -> Left Control", font=("default", 16)).grid(row=row, column=1, padx=10, pady=5, sticky="w")
+        row += 1
+        ttk.Label(header_frame, text="Strategem Up -> i", font=("default", 16)).grid(row=row, column=1, padx=10, pady=5, sticky="w")
+        row += 1
+        ttk.Label(header_frame, text="Strategem Left -> j", font=("default", 16)).grid(row=row, column=0, padx=10, pady=5, sticky="w")
+        ttk.Label(header_frame, text="Strategem Down -> k", font=("default", 16)).grid(row=row, column=1, padx=10, pady=5, sticky="w")
+        ttk.Label(header_frame, text="Strategem Right -> l", font=("default", 16)).grid(row=row, column=2, padx=10, pady=5, sticky="w")
+        row += 1
     
         # Create headers
         headers = ["Macro Key", "Bound To", ""]
