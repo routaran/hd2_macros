@@ -8,25 +8,25 @@ keyboard = Controller()
 # KeyboardListener class
 class KeyboardListener:
     # Constructor
-    def __init__(self, strategems_file, macro_file):
-        self.strategems_file = strategems_file
+    def __init__(self, stratagems_file, macro_file):
+        self.stratagems_file = stratagems_file
         self.macro_file = macro_file
-        self.strategems = {}    # Dictionary to store strategems
+        self.stratagems = {}    # Dictionary to store stratagems
         self.bindings = {}      # Dictionary to store macro bindings
-        self.load_strategems()  # Load strategems from a JSON file
+        self.load_stratagems()  # Load stratagems from a JSON file
         self.load_macros()      # Load macro bindings from a JSON file
         self.running = True     # Control the running of the listener loop
 
-    # Load strategems from a JSON file
-    def load_strategems(self):
-        """Load strategems from a JSON file."""
+    # Load stratagems from a JSON file
+    def load_stratagems(self):
+        """Load stratagems from a JSON file."""
         try:
-            with open(self.strategems_file, 'r') as file:
-                self.strategems = json.load(file)
+            with open(self.stratagems_file, 'r') as file:
+                self.stratagems = json.load(file)
         except FileNotFoundError:
-            print("Strategems file not found.")
+            print("stratagems file not found.")
         except json.JSONDecodeError:
-            print("Error decoding the strategems file.")
+            print("Error decoding the stratagems file.")
 
     # Load macro bindings from a JSON file
     def load_macros(self):
@@ -44,17 +44,17 @@ class KeyboardListener:
         try:
             key_name = key.char if hasattr(key, 'char') else key.name           # Get the key name
             if key_name in self.bindings:                                       # Check if the key name is in the bindings
-                strategem_name = self.bindings[key_name]
-                strategem_sequence = self.strategems.get(strategem_name, [])
-                self.execute_strategem(strategem_name, strategem_sequence)      # Execute the strategem
+                stratagem_name = self.bindings[key_name]
+                stratagem_sequence = self.stratagems.get(stratagem_name, [])
+                self.execute_stratagem(stratagem_name, stratagem_sequence)      # Execute the stratagem
         except AttributeError:
             pass
 
-    # Execute a strategem
-    def execute_strategem(self, name, sequence):
+    # Execute a stratagem
+    def execute_stratagem(self, name, sequence):
         current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         print(f"{current_time} - {name} - {sequence}")
-        # Call down Strategem
+        # Call down stratagem
         with keyboard.pressed(Key.ctrl_l):  # Press and hold the left control key
             time.sleep(0.1)
             for key in sequence:
