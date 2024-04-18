@@ -47,8 +47,8 @@ class KeyboardListener:
     def generate_empty_macros(self):
         """Generate empty macro bindings."""
         self.bindings = {
-            "insert": "Unassigned",
-            "home": "Unassigned",
+            "insert": "Mission - Reinforce",
+            "home": "Mission - Resupply",
             "page_up": "Unassigned",
             "delete": "Unassigned",
             "end": "Unassigned",
@@ -65,7 +65,9 @@ class KeyboardListener:
         self.stratagems = {
             "Mission - Reinforce": ["i", "k", "l", "j", "i"],
             "Mission - Resupply": ["k", "k", "i", "l"],
-            "Mission - SEAF Artillery": ["l", "i", "i", "k"]
+            "Mission - SEAF Artillery": ["l", "i", "i", "k"],
+            "Mission - Hellbomb": ["k", "i", "j", "k", "i", "l", "k", "i"],
+            "Eagle - Recovery": ["i", "i", "j", "i", "l"]
         }
 
     # Callback function for key press event
