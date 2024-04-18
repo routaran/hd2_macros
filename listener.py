@@ -25,8 +25,10 @@ class KeyboardListener:
                 self.stratagems = json.load(file)
         except FileNotFoundError:
             print("Stratagems file not found.")
+            self.generate_empty_stratagems()
         except json.JSONDecodeError:
             print("Error decoding the Stratagems file.")
+            self.generate_empty_stratagems()
 
     # Load macro bindings from a JSON file
     def load_macros(self):
@@ -36,8 +38,35 @@ class KeyboardListener:
                 self.bindings = json.load(file)
         except FileNotFoundError:
             print("Macro file not found.")
+            self.generate_empty_macros()
         except json.JSONDecodeError:
             print("Error decoding the macro file.")
+            self.generate_empty_macros()
+
+    # Generate empty macro bindings
+    def generate_empty_macros(self):
+        """Generate empty macro bindings."""
+        self.bindings = {
+            "insert": "Unassigned",
+            "home": "Unassigned",
+            "page_up": "Unassigned",
+            "delete": "Unassigned",
+            "end": "Unassigned",
+            "page_down": "Unassigned",
+            "up": "Unassigned",
+            "left": "Unassigned",
+            "down": "Unassigned",
+            "right": "Unassigned"
+        }
+
+    # Generate empty stratagems
+    def generate_empty_stratagems(self):
+        """Generate empty stratagems."""
+        self.stratagems = {
+            "Mission - Reinforce": ["i", "k", "l", "j", "i"],
+            "Mission - Resupply": ["k", "k", "i", "l"],
+            "Mission - SEAF Artillery": ["l", "i", "i", "k"]
+        }
 
     # Callback function for key press event
     def on_press(self, key):
