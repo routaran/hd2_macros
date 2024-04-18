@@ -1,12 +1,1 @@
-{
-    "insert": "Mission - Reinforce",
-    "home": "Mission - Resupply",
-    "page_up": "Weapon - Quasar Cannon",
-    "delete": "Eagle - Airstrike",
-    "end": "Orbital - Laser",
-    "page_down": "Eagle - Cluster",
-    "up": "Sentry - Autocannon",
-    "left": "Sentry - Gattling",
-    "down": "Weapon - Antitank",
-    "right": "Mission - SEAF Artillery"
-}
+{"insert": "Mission - Reinforce", "home": "Mission - Resupply", "page_up": "Weapon - Antitank", "delete": "Eagle - Airstrike", "end": "Orbital - Laser", "page_down": "Eagle - Cluster", "up": "Eagle - Recovery", "left": "Sentry - Mortar", "down": "Mission - Hellbomb", "right": "Mission - SEAF Artillery"}
