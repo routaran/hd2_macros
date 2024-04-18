@@ -19,7 +19,6 @@ class KeyboardListener:
 
     # Load Stratagems from a JSON file
     def load_stratagems(self):
-        """Load Stratagems from a JSON file."""
         try:
             with open(self.stratagems_file, 'r') as file:
                 self.stratagems = json.load(file)
@@ -32,7 +31,6 @@ class KeyboardListener:
 
     # Load macro bindings from a JSON file
     def load_macros(self):
-        """Load macro bindings from a JSON file."""
         try:
             with open(self.macro_file, 'r') as file:
                 self.bindings = json.load(file)
@@ -45,7 +43,6 @@ class KeyboardListener:
 
     # Generate empty macro bindings
     def generate_empty_macros(self):
-        """Generate empty macro bindings."""
         self.bindings = {
             "insert": "Mission - Reinforce",
             "home": "Mission - Resupply",
@@ -61,7 +58,6 @@ class KeyboardListener:
 
     # Generate empty stratagems
     def generate_empty_stratagems(self):
-        """Generate empty stratagems."""
         self.stratagems = {
             "Mission - Reinforce": ["i", "k", "l", "j", "i"],
             "Mission - Resupply": ["k", "k", "i", "l"],
