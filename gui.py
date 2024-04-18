@@ -3,6 +3,7 @@ from tkinter import ttk, simpledialog
 import json
 import threading
 from listener import KeyboardListener
+import os
 
 # GUI class
 class MacroGUI:
@@ -217,6 +218,14 @@ class CustomDialog(tk.simpledialog.Dialog):
 # Main function
 if __name__ == "__main__":
     mainApplication = tk.Tk()
-    listener = KeyboardListener('stratagems.json', 'macros.json')
+    # Get the directory of the script
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # Specify the file paths relative to the script directory
+    stratagems_file = os.path.join(script_dir, 'stratagems.json')
+    macros_file = os.path.join(script_dir, 'macros.json')
+
+    # Create the KeyboardListener instance
+    listener = KeyboardListener(stratagems_file, macros_file)
     app = MacroGUI(mainApplication, listener)
     mainApplication.mainloop()
