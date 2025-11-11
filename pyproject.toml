@@ -29,6 +29,7 @@ classifiers = [
 
 dependencies = [
     "pynput==1.7.6",
+    "PyQt6>=6.6.0",
 ]
 
 [project.optional-dependencies]

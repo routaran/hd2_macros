@@ -40,18 +40,41 @@ Continue with the following steps if you wish to run the python script instead o
 
 ## Usage
 
-To use the program:
+The application now offers **two UI options**:
 
-1. Launch via Python:
-    ```
-    python gui.py
-    ```
-Alternatively:
+### Option 1: Modern PyQt6 UI (Recommended) ⭐
 
-1. Run the precompiled Windows executable; json files MUST be in the same folder as the executable. You can move the executable anywhere you want, as long as it is with the 2 json files. I tested this on my Win10x64 and it worked, not sure about compatibility with other versions as I don't have access to other versions of Windows but it should work. The executable will not work with x86 versions of Windows.
-    ```
-    stratagems.exe
-    ```
+The new PyQt6 interface provides a professional, modern look with enhanced features:
+
+```bash
+python gui_qt.py
+```
+
+**Features:**
+- Dark theme with professional styling
+- Visual macro key widgets (looks like actual keyboard keys)
+- Searchable stratagem library
+- Better layout and organization
+- Smoother animations and transitions
+- System tray support (when available)
+
+### Option 2: Classic Tkinter UI
+
+The original Tkinter interface (still fully functional):
+
+```bash
+python gui.py
+```
+
+### Using the Precompiled Windows Executable
+
+Run the precompiled Windows executable; json files MUST be in the same folder as the executable:
+
+```
+stratagems.exe
+```
+
+**Note:** You can move the executable anywhere, as long as it's with the 2 json files. Tested on Win10x64.
 
 2. The program will open a GUI where you can manage your stratagems.
 
@@ -67,6 +90,20 @@ Alternatively:
 
 ## Features
 
+### UI Options
+- **Modern PyQt6 Interface** ⭐ New!
+  - Professional dark theme
+  - Visual macro key widgets that look like actual keyboard keys
+  - Searchable stratagem library with real-time filtering
+  - Improved layout with split-panel design
+  - Menu bar with File and Help menus
+  - Better visual feedback and animations
+
+- **Classic Tkinter Interface**
+  - Original simple and lightweight interface
+  - Still fully functional and supported
+
+### Core Features
 - **10 Macro Keys**: Bind stratagems to special keyboard keys (Insert, Home, Page_Up, Delete, End, Page_Down, Arrow keys)
 - **30+ Pre-configured Stratagems**: Includes missions, eagle strikes, orbital support, sentries, and weapons
 - **Add/Edit/Delete Stratagems**: Full management of stratagem database through GUI
@@ -290,7 +327,19 @@ mypy gui.py listener.py
 
 ## Version History
 
-### Version 2.0.0
+### Version 2.1.0 (PyQt6 UI Release) 🎨
+- **NEW:** Modern PyQt6-based user interface
+  - Professional dark theme with cohesive color scheme
+  - Visual macro key widgets styled like actual keyboard keys
+  - Searchable stratagem library with real-time filtering
+  - Split-panel layout for better organization
+  - Menu bar with File and Help menus
+  - Improved visual feedback and hover effects
+- Dual UI support: Choose between modern PyQt6 or classic Tkinter
+- Added PyQt6 to dependencies
+- Updated documentation with UI comparison
+
+### Version 2.0.0 (Code Quality Release)
 - Added input validation for stratagem keys
 - Implemented automatic backup mechanism
 - Added comprehensive error handling
@@ -306,10 +355,10 @@ mypy gui.py listener.py
 - Confirmation dialogs for destructive operations
 - Improved documentation and troubleshooting
 
-### Version 1.0.0
+### Version 1.0.0 (Initial Release)
 - Initial release
 - Basic macro functionality
-- GUI for stratagem management
+- Tkinter GUI for stratagem management
 - 10 macro key bindings
 
 ## Contributing
