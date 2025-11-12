@@ -23,3 +23,4 @@ types-setuptools
 # Build tools
 build>=0.10.0
 wheel>=0.41.0
+pyinstaller>=6.0.0

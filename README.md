@@ -66,27 +66,38 @@ The original Tkinter interface (still fully functional):
 python gui.py
 ```
 
-### Using the Precompiled Windows Executable
+### Using Precompiled Executables
 
-Run the precompiled Windows executable; json files MUST be in the same folder as the executable:
+**Two executable options available:**
 
-```
-stratagems.exe
-```
+1. **Modern PyQt6 UI** (Recommended):
+   ```
+   HD2_Macros_PyQt6.exe
+   ```
 
-**Note:** You can move the executable anywhere, as long as it's with the 2 json files. Tested on Win10x64.
+2. **Classic Tkinter UI**:
+   ```
+   HD2_Macros_Tkinter.exe
+   ```
 
-2. The program will open a GUI where you can manage your stratagems.
+**Important:** The JSON configuration files (`stratagems.json` and `macros.json`) MUST be in the same folder as the executable.
 
-3. You can add a new stratagem by clicking the "Add Stratagem" button and entering the name and keys of the stratagem.
+**Building Your Own:**
+See [BUILD.md](BUILD.md) for detailed instructions on creating executables for Windows, Linux, or macOS.
 
-4. You can edit an existing stratagem by clicking the "Edit Stratagem" button, selecting the stratagem to edit, and entering the new keys.
+### Using the Application
 
-5. You can delete an existing stratagem by clicking the "Delete Stratagem" button and selecting the stratagem to delete. If the stratagem is currently bound to a macro, the macro will be set to "Unassigned".
+1. The program will open a GUI where you can manage your stratagems.
 
-6. If you make a mistake and accidentally delete stratagems, you can restore the original setup by downloading and replacing the stratagem.json file from the repository. This allows you to revert back to the original stratagems without having to manually re-enter them.
+2. You can add a new stratagem by clicking the "Add Stratagem" button and entering the name and keys of the stratagem.
 
-7. You will need to ensure that your stratagem key is set to Left Control and you remap the stratagem arrows to i, j, k, l corresponding to Up, Left, Down, Right.
+3. You can edit an existing stratagem by clicking the "Edit Stratagem" button, selecting the stratagem to edit, and entering the new keys.
+
+4. You can delete an existing stratagem by clicking the "Delete Stratagem" button and selecting the stratagem to delete. If the stratagem is currently bound to a macro, the macro will be set to "Unassigned".
+
+5. If you make a mistake and accidentally delete stratagems, you can restore the original setup by downloading and replacing the stratagem.json file from the repository. This allows you to revert back to the original stratagems without having to manually re-enter them.
+
+6. You will need to ensure that your stratagem key is set to Left Control and you remap the stratagem arrows to i, j, k, l corresponding to Up, Left, Down, Right.
 
 ## Features
 

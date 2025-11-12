@@ -177,3 +177,8 @@ htmlcov/
 
 # pytest
 .pytest_cache/
+
+# PyInstaller build artifacts
+build/
+dist/
+*.spec.log
