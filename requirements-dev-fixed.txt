@@ -1,0 +1,33 @@
+# Development dependencies for hd2-macros
+# Fixed version that handles evdev compilation issues on Linux
+
+# Runtime dependencies
+# Note: pynput requires special installation on Linux due to evdev compilation issues
+# See install-dev.sh for proper installation
+pynput==1.7.6
+PyQt6>=6.6.0
+
+# Additional dependencies for pynput on Linux (X11 support)
+python-xlib>=0.17
+six
+
+# Testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
+pytest-mock>=3.11.1
+
+# Code formatting
+black>=23.7.0
+
+# Linting
+pylint>=2.17.5
+flake8>=6.1.0
+
+# Type checking
+mypy>=1.4.1
+types-setuptools
+
+# Build tools
+build>=0.10.0
+wheel>=0.41.0
+pyinstaller>=6.0.0

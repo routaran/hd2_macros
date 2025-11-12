@@ -169,16 +169,22 @@ class KeyboardListener:
         """
         try:
             key_name = key.char if hasattr(key, 'char') else key.name  # Get the key name
+            logger.debug(f"Key pressed: {key_name} (type: {type(key).__name__})")
 
             # Thread-safe check of bindings
             with self.data_lock:
+                logger.debug(f"Current bindings: {list(self.bindings.keys())}")
                 if key_name in self.bindings:
                     stratagem_name = self.bindings[key_name]
                     stratagem_sequence = self.stratagems.get(stratagem_name, [])
 
             # Execute stratagem if valid
             if key_name in self.bindings and stratagem_sequence:
+                logger.debug(f"Macro triggered for key: {key_name}")
                 self.execute_stratagem(stratagem_name, stratagem_sequence)
+            else:
+                if key_name in self.bindings:
+                    logger.warning(f"No stratagem sequence found for: {self.bindings[key_name]}")
         except AttributeError:
             # Ignore keys without char or name attributes
             pass
@@ -225,6 +231,7 @@ class KeyboardListener:
         logger.info("Starting keyboard listener")
         try:
             with Listener(on_press=self.on_press) as listener:
+                logger.info("Keyboard listener is now active and listening for key presses")
                 self.listener_instance = listener
                 while self.running:
                     time.sleep(0.1)  # Prevent busy waiting

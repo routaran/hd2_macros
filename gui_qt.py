@@ -386,7 +386,7 @@ class MacroGUI(QMainWindow):
 
         # Central widget
         central_widget = QWidget()
-        self.setCentral(central_widget)
+        self.setCentralWidget(central_widget)
 
         # Main layout
         main_layout = QHBoxLayout()
@@ -757,13 +757,22 @@ def main():
     """Main entry point for PyQt6 GUI."""
     # Setup logging
     logging.basicConfig(
-        level=logging.INFO,
+        level=logging.DEBUG,
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
         handlers=[
             logging.FileHandler('stratagems.log'),
             logging.StreamHandler()
         ]
     )
+
+    # Check for X11 display on Linux
+    if sys.platform.startswith('linux'):
+        if not os.environ.get('DISPLAY'):
+            logger.error("DISPLAY environment variable not set!")
+            logger.error("This application requires X11 to capture keyboard events.")
+            logger.error("Please run on an X11 system or set DISPLAY=:0")
+            sys.exit(1)
+        logger.info(f"Running on Linux with DISPLAY={os.environ.get('DISPLAY')}")
 
     # Get file paths
     script_dir = os.path.dirname(os.path.abspath(__file__))
